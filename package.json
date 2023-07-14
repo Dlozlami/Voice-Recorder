@@ -9,15 +9,20 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/webpack-config": "^18.0.1",
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
     "expo": "~48.0.18",
+    "expo-av": "~13.2.1",
     "expo-status-bar": "~1.4.4",
+    "express": "^4.18.2",
+    "mongoose": "^7.3.4",
+    "morgan": "^1.10.0",
     "react": "18.2.0",
+    "react-dom": "18.2.0",
     "react-native": "0.71.8",
     "react-native-audio-recorder-player": "^3.5.3",
-    "react-dom": "18.2.0",
-    "react-native-web": "~0.18.10",
-    "@expo/webpack-config": "^18.0.1",
-    "expo-av": "~13.2.1"
+    "react-native-web": "~0.18.10"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
