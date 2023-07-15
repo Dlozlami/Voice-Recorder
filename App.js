@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, Button, Modal, TextInput } from 'react-native';
 import { Audio } from 'expo-av';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function App() {
   const [recording, setRecording] = useState();
@@ -36,6 +37,8 @@ export default function App() {
     const uri = recording.getURI();
     setLastRecordingURI(uri);
     console.log('Recording stopped and stored at', uri);
+
+    setModalVisible(true); // Open the modal after stopping recording
   }
 
   async function playLastRecording() {
@@ -52,15 +55,14 @@ export default function App() {
     // Perform your save logic here using the fileName state variable
     console.log('Saving audio file as:', fileName);
 
-    // Reset the modal state
     setFileName('');
-    setModalVisible(false);
+    setModalVisible(false); // Close the modal after saving
   }
 
   return (
     <View style={styles.container}>
       <Button
-        title={recording ? 'Stop Recording' : 'Start Recording'}
+        title={recording ? <Ionicons name="stop-circle-outline" size={48} color="black" />: <Ionicons name="mic" size={48} color="white" />}
         onPress={recording ? stopRecording : startRecording}
       />
       <Button
@@ -85,8 +87,6 @@ export default function App() {
           <Button title="Save" onPress={handleSave} />
         </View>
       </Modal>
-
-      <Button title="Save Audio" onPress={() => setModalVisible(true)} />
     </View>
   );
 }
