@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet, Pressable, Modal, TextInput, SafeAreaView } from 'react-native';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 
 export default function App() {
   const [recording, setRecording] = useState();
@@ -70,26 +71,30 @@ export default function App() {
     }
   }
 
+
   async function handleSave() {
+    const soundObject = new Audio.Sound();
+    try {
+      await soundObject.loadAsync({ uri: lastRecordingURI });
+    } catch (error) {
+      console.error('Failed to load the last recording', error);
+    }
+
     const recordingDetails = {
       rec_id: generateUniqueID(),
       user_id: 'uxdlozi',
       audio_name: fileName,
-      audio_file: lastRecordingURI,
+      audio_file: soundObject,
       duration: formatTime(timer),
     };
   
-    console.log('Recording Details:', recordingDetails);
-  
-    // Fetch the file information using expo-file-system
-    const fileUri = recordingDetails.audio_file;
-    const { size } = await FileSystem.getInfoAsync(fileUri);
-    console.log('Audio File Size:', size);
+
   
     setTimer(0); // Reset the timer back to 0
     setFileName('');
     setModalVisible(false); // Close the modal after saving
   }
+  
   
 
   function formatTime(time) {
@@ -113,6 +118,11 @@ export default function App() {
         <Pressable
           onPress={recording ? stopRecording : startRecording}>
           <Text>{recording ? <Ionicons name="stop-circle-outline" size={48} color="white" />: <Ionicons name="mic" size={48} color="white" />}</Text>
+        </Pressable>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Pressable onPress={playLastRecording} style={styles.playButton}>
+          <Text style={styles.buttonText}>Play Last Recording</Text>
         </Pressable>
       </View>
       <Modal
@@ -173,5 +183,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  playButton: {
+    backgroundColor: 'green',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
