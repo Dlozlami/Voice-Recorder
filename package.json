@@ -26,7 +26,8 @@
     "react-dom": "18.2.0",
     "react-native": "0.71.8",
     "react-native-audio-recorder-player": "^3.5.3",
-    "react-native-web": "~0.18.10"
+    "react-native-web": "~0.18.10",
+    "expo-file-system": "~15.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, Modal, TextInput } from 'react-native';
+import { Text, View, StyleSheet, Pressable, Modal, TextInput, SafeAreaView } from 'react-native';
 import { Audio } from 'expo-av';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -70,16 +70,27 @@ export default function App() {
     }
   }
 
-  function handleSave() {
-    // Perform your save logic here using the fileName state variable
-    const uniqueID = generateUniqueID();
-    console.log('Saving audio file as:', fileName, 'Duration:', formatTime(timer), 'Unique ID:', uniqueID);
-    
-    
+  async function handleSave() {
+    const recordingDetails = {
+      rec_id: generateUniqueID(),
+      user_id: 'uxdlozi',
+      audio_name: fileName,
+      audio_file: lastRecordingURI,
+      duration: formatTime(timer),
+    };
+  
+    console.log('Recording Details:', recordingDetails);
+  
+    // Fetch the file information using expo-file-system
+    const fileUri = recordingDetails.audio_file;
+    const { size } = await FileSystem.getInfoAsync(fileUri);
+    console.log('Audio File Size:', size);
+  
     setTimer(0); // Reset the timer back to 0
     setFileName('');
     setModalVisible(false); // Close the modal after saving
   }
+  
 
   function formatTime(time) {
     const minutes = Math.floor(time / 6000).toString().padStart(2, '0');
@@ -95,15 +106,15 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.timerContainer}>
         <Text style={styles.timer}>{formatTime(timer)}</Text>
+      
+        <Pressable
+          onPress={recording ? stopRecording : startRecording}>
+          <Text>{recording ? <Ionicons name="stop-circle-outline" size={48} color="white" />: <Ionicons name="mic" size={48} color="white" />}</Text>
+        </Pressable>
       </View>
-      <Button
-        title={recording ? <Ionicons name="stop-circle-outline" size={48} color="white" />: <Ionicons name="mic" size={48} color="white" />}
-        onPress={recording ? stopRecording : startRecording}
-      />
-
       <Modal
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
@@ -117,10 +128,12 @@ export default function App() {
             value={fileName}
             placeholder="File Name"
           />
-          <Button title="Save" onPress={handleSave} />
+          <Pressable onPress={handleSave}>
+            <Text>Save</Text>
+          </Pressable>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
