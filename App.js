@@ -101,7 +101,6 @@ export default function App() {
   }
   
   
-  
 
   function formatTime(time) {
     const minutes = Math.floor(time / 6000).toString().padStart(2, '0');
