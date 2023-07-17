@@ -79,7 +79,7 @@ export default function App() {
     } catch (error) {
       console.error('Failed to load the last recording', error);
     }
-
+  
     const recordingDetails = {
       rec_id: generateUniqueID(),
       user_id: 'uxdlozi',
@@ -88,12 +88,18 @@ export default function App() {
       duration: formatTime(timer),
     };
   
-
+    try {
+      await axios.post('http://10.255.66.152:8080/api/recordings', recordingDetails);
+      console.log('Recording details sent successfully.');
+    } catch (error) {
+      console.error('Failed to send recording details', error);
+    }
   
-    setTimer(0); // Reset the timer back to 0
+    setTimer(0);
     setFileName('');
-    setModalVisible(false); // Close the modal after saving
+    setModalVisible(false);
   }
+  
   
   
 

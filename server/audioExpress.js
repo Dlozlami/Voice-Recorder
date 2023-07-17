@@ -4,30 +4,52 @@ const morgan = require("morgan");
 const mongoose = require('mongoose');
 const Recordings = require("../models/recordings.models");
 const app = express();
-const multer = require('multer');
 app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"))
 
-//mongoose.connect('mongodb://127.0.0.1:27017/Voice-Notes');
+mongoose.connect('mongodb://127.0.0.1:27017/Voice-Notes');
 
-// Configure Multer
-const upload = multer({ dest: 'uploads/' }); // Specify the destination folder for uploaded files
+
+
+app.get('/', function (req, res) {
+  res.send('Welcome to Audio Express!');
+});
 
 app.get('/api/', function (req, res) {
   res.send('Working!');
 });
 
-app.get('/api/recordings/', function (req, res) {
-  res.send('Recordings...\n');
+app.get('/api/recordings/', async function (req, res) {
+  try {
+    const recordings = await Recordings.find();
+    res.status(200).json(recordings);
+  } catch (error) {
+    console.error('Failed to fetch recordings', error);
+    res.status(500).json({ message: 'Failed to fetch recordings' });
+  }
 });
 
-app.post('/api/recordings/', upload.single('audio_file'), function (req, res) {
-  console.log('Received audio file:', req.file); // Log the received file
 
-  // Save the received file to MongoDB or perform other operations
+app.post('/api/recordings/', async function (req, res) {
+  const { rec_id, user_id, audio_name, audio_file, duration } = req.body;
 
-  res.send(req.file); // Send a success response
+  try {
+    const recording = new Recordings({
+      rec_id,
+      user_id,
+      audio_name,
+      audio_file,
+      duration
+    });
+
+    await recording.save();
+
+    res.status(201).json({ message: 'Recording saved successfully' });
+  } catch (error) {
+    console.error('Failed to save recording', error);
+    res.status(500).json({ message: 'Failed to save recording' });
+  }
 });
 
 // Listening to server at port 5000
